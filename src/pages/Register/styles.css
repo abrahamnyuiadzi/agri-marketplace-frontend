@@ -1,0 +1,55 @@
+.name-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.name-row .input-group {
+  flex: 1;
+  min-width: 0; /* évite que les inputs débordent sur mobile */
+}
+
+.role-group {
+  margin-bottom: 1.25rem;
+}
+
+.role-options {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.role-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.role-option--active {
+  border-color: #2e7d32;
+  background: #f1f8f2;
+  font-weight: 600;
+}
+
+.role-option input {
+  accent-color: #2e7d32;
+}
+
+/* Mobile : on empile prénom/nom et les boutons de rôle */
+@media (max-width: 480px) {
+  .name-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .role-options {
+    flex-direction: column;
+  }
+}

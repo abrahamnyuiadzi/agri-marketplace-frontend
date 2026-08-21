@@ -1,0 +1,140 @@
+.producer-farms__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.producer-farms__header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.producer-farms__empty {
+  background: white;
+  border-radius: 10px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: #555;
+}
+
+.producer-farms__empty-hint {
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 0.4rem;
+}
+
+.farms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.farm-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.farm-card__image {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #f1f8f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+.farm-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.farm-card__badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.farm-card__body {
+  padding: 1rem;
+}
+
+.farm-card__body h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+}
+
+.farm-card__location {
+  margin: 0 0 0.2rem;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.farm-card__meta {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.farm-card__description {
+  margin: 0 0 0.85rem;
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+.farm-card__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Formulaire */
+.farm-form__error {
+  background: #fdecea;
+  color: #c62828;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.farm-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.farm-form__textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.farm-form__hint {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.farm-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 480px) {
+  .farm-form__row {
+    grid-template-columns: 1fr;
+  }
+}

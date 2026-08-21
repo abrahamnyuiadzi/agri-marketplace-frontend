@@ -1,0 +1,57 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.navbar__logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #2e7d32;
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.navbar__cart {
+  position: relative;
+}
+
+.navbar__badge {
+  background: #c62828;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  margin-left: 0.3rem;
+}
+
+.navbar__logout {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #c62828;
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 1rem;
+  }
+
+  .navbar__links {
+    width: 100%;
+    justify-content: center;
+    gap: 0.85rem;
+  }
+}

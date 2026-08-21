@@ -1,0 +1,288 @@
+.home {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 3rem 0;
+}
+
+.hero__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero__badge {
+  display: inline-block;
+  background: #f1f8f2;
+  color: #2e7d32;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.hero__title {
+  font-size: 2.5rem;
+  line-height: 1.15;
+  margin: 0 0 1rem;
+}
+
+.hero__subtitle {
+  color: #555;
+  font-size: 1.05rem;
+  margin: 0 0 1.5rem;
+  max-width: 480px;
+}
+
+.hero__actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.hero__btn {
+  padding: 0.7rem 1.3rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.hero__btn--primary {
+  background: #2e7d32;
+  color: white;
+}
+
+.hero__btn--secondary {
+  background: white;
+  color: #1a1a1a;
+  border: 1px solid #ddd;
+}
+
+.hero__search {
+  display: flex;
+  max-width: 480px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  overflow: hidden;
+}
+
+.hero__search input {
+  flex: 1;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  min-width: 0;
+}
+
+.hero__search input:focus {
+  outline: none;
+}
+
+.hero__search button {
+  border: none;
+  background: #2e7d32;
+  color: white;
+  padding: 0 1.1rem;
+  cursor: pointer;
+}
+
+.hero__image {
+  flex: 1;
+  min-width: 0;
+  height: 360px;
+  border-radius: 12px;
+  background-image: url('/images/agri-image1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #e0e0e0;
+}
+
+/* Sections communes */
+.section {
+  padding: 2rem 0;
+}
+
+.section__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.section__header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.section__header a {
+  font-size: 0.85rem;
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Features */
+.features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  padding: 2rem 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.feature__icon {
+  font-size: 1.6rem;
+}
+
+.feature strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.feature p {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* CTA vendeur */
+.seller-cta {
+  display: grid;
+  grid-template-columns: 220px 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  background: #f1f8f2;
+  border-radius: 14px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+.seller-cta__image img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #dcdcdc;
+}
+
+.seller-cta__content h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+}
+
+.seller-cta__content p {
+  margin: 0 0 1rem;
+  color: #555;
+}
+
+.seller-cta__stats {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.seller-cta__stats div {
+  text-align: center;
+}
+
+.seller-cta__stats strong {
+  display: block;
+  font-size: 1.3rem;
+  color: #2e7d32;
+}
+
+.seller-cta__stats span {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+/* Responsive : CE BLOC est celui qui doit faire passer l'image sous le texte */
+/* @media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+  }
+
+  .hero__content,
+  .hero__image {
+    width: 100%;
+  }
+
+  .hero__image {
+    height: 240px;
+  }
+
+  .features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .seller-cta {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .seller-cta__stats {
+    justify-content: center;
+  }
+} */
+
+@media (max-width: 1024px) {
+  .hero {
+    flex-direction: column;
+  }
+
+  .hero__content,
+  .hero__image {
+    width: 100%;
+  }
+
+  .hero__image {
+    height: 240px;
+  }
+
+  .features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .seller-cta {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .seller-cta__stats {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .features {
+    grid-template-columns: 1fr;
+  }
+}

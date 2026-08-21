@@ -1,0 +1,60 @@
+import { api } from './api';
+import type { ApiEnvelope, LaravelPaginator, Product } from '../types';
+
+
+export interface ProductFilters {
+  search?: string;
+  category_id?: number;
+  farm_id?: number;
+  page?: number;
+}
+
+export async function getProducts(
+  filters: ProductFilters = {}
+): Promise<LaravelPaginator<Product>> {
+  const { data } = await api.get<ApiEnvelope<LaravelPaginator<Product>>>(
+    '/products',
+    { params: filters }
+  );
+  return data.data;
+}
+
+export async function getProduct(id: number | string): Promise<Product> {
+  const { data } = await api.get<ApiEnvelope<Product>>(`/products/${id}`);
+  return data.data;
+}
+
+export async function createProduct(payload: FormData): Promise<Product> {
+  const { data } = await api.post<ApiEnvelope<Product>>('/products', payload, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return data.data;
+}
+
+export async function updateProduct(
+  id: number | string,
+  payload: FormData
+): Promise<Product> {
+  payload.append('_method', 'PUT');
+  const { data } = await api.post<ApiEnvelope<Product>>(
+    `/products/${id}`,
+    payload,
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+  return data.data;
+}
+
+export async function deleteProduct(id: number | string): Promise<void> {
+  await api.delete(`/products/${id}`);
+}
+
+// Produits du producteur connecté (dashboard "Mes produits")
+export async function getMyProducts(
+  page = 1
+): Promise<LaravelPaginator<Product>> {
+  const { data } = await api.get<ApiEnvelope<LaravelPaginator<Product>>>(
+    '/producer/products',
+    { params: { page } }
+  );
+  return data.data;
+}
