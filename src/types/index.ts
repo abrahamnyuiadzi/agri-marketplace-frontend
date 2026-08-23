@@ -66,14 +66,9 @@ export interface Farm {
 
 export interface Product {
   id: number;
-
   user_id: number;
-
   farm_id: number;
-  farm?: Farm;
-
   category_id: number;
-  category?: Category;
 
   name: string;
   description: string;
@@ -85,6 +80,9 @@ export interface Product {
   unit: string;
 
   is_available: boolean;
+
+  category?: Category;
+  farm?: Farm;
 
   created_at: string;
   updated_at: string;
