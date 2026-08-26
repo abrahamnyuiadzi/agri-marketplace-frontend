@@ -4,11 +4,9 @@ export interface User {
   id: number;
   first_name: string;
   last_name: string;
+  phone: string;
   email: string;
-  role: UserRole;
-  phone?: string;
-  avatar_url?: string;
-  created_at: string;
+  role: string;
 }
 
 export interface Category {
@@ -36,16 +34,14 @@ export interface Farm {
   user_id: number;
   name: string;
   description?: string;
-  location: string;
-  city: string;
-  country: string;
-  surface: number;
-  type: FarmType;
-  image?: string;
-  image_url?: string;
+  location?: string;
+  city?: string;
+  country?: string;
+  surface?: number;
+  type?: string;
+  image?: string | null;
   is_verified: boolean;
-  producer?: User;
-  created_at: string;
+  owner?: User;
 }
 
 // export interface Product {
@@ -78,7 +74,6 @@ export interface Product {
   price: number;
   quantity: number;
   unit: string;
-
   is_available: boolean;
 
   category?: Category;

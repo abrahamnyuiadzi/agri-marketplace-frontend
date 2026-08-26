@@ -48,12 +48,7 @@ export function AppRoutes() {
           <Route path="/profile" element={<Profile />} />
         </Route>
 
-        {/* <Route path="/producer" element={<ProducerRoute />}>
-          <Route path="dashboard" element={<ProducerDashboard />} />
-          <Route path="products" element={<ProducerProducts />} />
-          <Route path="farms" element={<ProducerFarms />} />
-          <Route path="orders" element={<ProducerOrders />} />
-        </Route> */}
+        
 
         <Route path="/producer" element={<ProducerRoute />}>
           <Route element={<ProducerLayout />}>
@@ -64,13 +59,7 @@ export function AppRoutes() {
           </Route>
         </Route>
 
-        {/* <Route path="/admin" element={<AdminRoute />}>
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="producers" element={<AdminProducers />} />
-          <Route path="categories" element={<AdminCategories />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="orders" element={<AdminOrders />} />
-        </Route> */}
+       
 
         <Route path="/admin" element={<AdminRoute />}>
           <Route element={<AdminLayout />}>
@@ -84,6 +73,7 @@ export function AppRoutes() {
 
         <Route path="*" element={<div>Page introuvable</div>} />
       </Routes>
+ 
     </Suspense>
   );
 }
