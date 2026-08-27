@@ -21,14 +21,47 @@ export default function Home() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
+  /* =========================
+     IMAGES DU HERO
+  ========================== */
+
+  const heroImages = [
+  
+  '/images/back1.jpg',
+  '/images/back2.jpg',
+  '/images/back3.jpg',
+  '/images/back4.jpg',
+  ];
+
+  const [currentHeroImage, setCurrentHeroImage] = useState(0);
+
+  /* =========================
+     CHARGEMENT INITIAL
+  ========================== */
+
   useEffect(() => {
     loadCategories();
     loadProducts();
   }, []);
 
-  /**
-   * Charger toutes les catégories
-   */
+  /* =========================
+     SLIDESHOW HERO
+  ========================== */
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentHeroImage((previous) => {
+        return (previous + 1) % heroImages.length;
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
+
+  /* =========================
+     CHARGER LES CATÉGORIES
+  ========================== */
+
   async function loadCategories() {
     try {
       const data = await getCategories();
@@ -44,24 +77,15 @@ export default function Home() {
     }
   }
 
-  /**
-   * Charger les produits
-   */
+  /* =========================
+     CHARGER LES PRODUITS
+  ========================== */
+
   async function loadProducts() {
     try {
       const response = await getProducts({
         page: 1,
       });
-
-      /**
-       * Laravel paginate() retourne :
-       *
-       * {
-       *   data: [...]
-       *   current_page: 1,
-       *   ...
-       * }
-       */
 
       setProducts(response.data);
     } catch (error) {
@@ -74,9 +98,10 @@ export default function Home() {
     }
   }
 
-  /**
-   * Recherche
-   */
+  /* =========================
+     RECHERCHE
+  ========================== */
+
   function handleSearch(
     event: React.FormEvent<HTMLFormElement>
   ) {
@@ -93,19 +118,64 @@ export default function Home() {
       `/products?search=${encodeURIComponent(query)}`;
   }
 
+  /* =========================
+     CHANGER IMAGE HERO
+  ========================== */
+
+  function changeHeroImage(index: number) {
+    setCurrentHeroImage(index);
+  }
+
   return (
     <div className="home">
 
-      {/* =========================
+      {/* =====================================================
           HERO
-      ========================== */}
+      ====================================================== */}
 
       <section className="hero">
+
+        {/* =========================
+            IMAGES BACKGROUND
+        ========================== */}
+
+        <div className="hero__background">
+
+          {heroImages.map((image, index) => (
+            <div
+              key={image}
+              className={`hero__slide ${
+                index === currentHeroImage
+                  ? 'hero__slide--active'
+                  : ''
+              }`}
+              style={{
+                backgroundImage: `url("${image}")`,
+              }}
+            />
+          ))}
+
+        </div>
+
+        {/* =========================
+            OVERLAY
+        ========================== */}
+
+        <div className="hero__overlay" />
+
+        {/* =========================
+            CONTENU HERO
+        ========================== */}
+
         <div className="hero__content">
+
+          {/* Badge */}
 
           <span className="hero__badge">
             🌱 Produits frais et locaux
           </span>
+
+          {/* Titre */}
 
           <h1 className="hero__title">
             Des produits agricoles
@@ -113,10 +183,14 @@ export default function Home() {
             frais et de qualité
           </h1>
 
+          {/* Description */}
+
           <p className="hero__subtitle">
             Achetez directement auprès des cultivateurs
             et éleveurs. Soutenez l'agriculture locale.
           </p>
+
+          {/* Boutons */}
 
           <div className="hero__actions">
 
@@ -136,10 +210,13 @@ export default function Home() {
 
           </div>
 
+          {/* Recherche */}
+
           <form
             className="hero__search"
             onSubmit={handleSearch}
           >
+
             <input
               type="text"
               placeholder="Rechercher un produit, une catégorie…"
@@ -152,21 +229,41 @@ export default function Home() {
             <button type="submit">
               🔍
             </button>
+
           </form>
 
         </div>
 
-        <div
-          className="hero__image"
-          role="img"
-          aria-label="Producteur agricole"
-        />
+        {/* =================================================
+            INDICATEURS DU SLIDESHOW
+        ================================================== */}
+
+        <div className="hero__indicators">
+
+          {heroImages.map((_, index) => (
+
+            <button
+              key={index}
+              type="button"
+              className={`hero__indicator ${
+                index === currentHeroImage
+                  ? 'hero__indicator--active'
+                  : ''
+              }`}
+              onClick={() => changeHeroImage(index)}
+              aria-label={`Afficher l'image ${index + 1}`}
+            />
+
+          ))}
+
+        </div>
 
       </section>
 
-      {/* =========================
+
+      {/* =====================================================
           CATÉGORIES
-      ========================== */}
+      ====================================================== */}
 
       <section className="section">
 
@@ -197,10 +294,12 @@ export default function Home() {
           <div className="categories-grid">
 
             {categories.map((category) => (
+
               <CategoryCard
                 key={category.id}
                 category={category}
               />
+
             ))}
 
           </div>
@@ -209,9 +308,10 @@ export default function Home() {
 
       </section>
 
-      {/* =========================
+
+      {/* =====================================================
           PRODUITS
-      ========================== */}
+      ====================================================== */}
 
       <section className="section">
 
@@ -242,10 +342,12 @@ export default function Home() {
           <div className="products-grid">
 
             {products.map((product) => (
+
               <ProductCard
                 key={product.id}
                 product={product}
               />
+
             ))}
 
           </div>
@@ -254,9 +356,10 @@ export default function Home() {
 
       </section>
 
-      {/* =========================
+
+      {/* =====================================================
           FEATURES
-      ========================== */}
+      ====================================================== */}
 
       <section className="features">
 
@@ -267,6 +370,7 @@ export default function Home() {
           </span>
 
           <div>
+
             <strong>
               Produits frais
             </strong>
@@ -274,9 +378,11 @@ export default function Home() {
             <p>
               Directement de nos fermes
             </p>
+
           </div>
 
         </div>
+
 
         <div className="feature">
 
@@ -285,6 +391,7 @@ export default function Home() {
           </span>
 
           <div>
+
             <strong>
               Prix justes
             </strong>
@@ -292,9 +399,11 @@ export default function Home() {
             <p>
               Sans intermédiaires
             </p>
+
           </div>
 
         </div>
+
 
         <div className="feature">
 
@@ -303,6 +412,7 @@ export default function Home() {
           </span>
 
           <div>
+
             <strong>
               Soutien local
             </strong>
@@ -310,9 +420,11 @@ export default function Home() {
             <p>
               Valorisons nos producteurs
             </p>
+
           </div>
 
         </div>
+
 
         <div className="feature">
 
@@ -321,6 +433,7 @@ export default function Home() {
           </span>
 
           <div>
+
             <strong>
               Livraison rapide
             </strong>
@@ -328,17 +441,21 @@ export default function Home() {
             <p>
               Partout au Togo
             </p>
+
           </div>
 
         </div>
 
       </section>
 
-      {/* =========================
+
+      {/* =====================================================
           CTA VENDEUR
-      ========================== */}
+      ====================================================== */}
 
       <section className="seller-cta">
+
+        {/* Image */}
 
         <div className="seller-cta__image">
 
@@ -348,6 +465,9 @@ export default function Home() {
           />
 
         </div>
+
+
+        {/* Contenu */}
 
         <div className="seller-cta__content">
 
@@ -369,9 +489,13 @@ export default function Home() {
 
         </div>
 
+
+        {/* Statistiques */}
+
         <div className="seller-cta__stats">
 
           <div>
+
             <strong>
               +1200
             </strong>
@@ -379,9 +503,12 @@ export default function Home() {
             <span>
               Producteurs inscrits
             </span>
+
           </div>
 
+
           <div>
+
             <strong>
               +3500
             </strong>
@@ -389,9 +516,12 @@ export default function Home() {
             <span>
               Produits en vente
             </span>
+
           </div>
 
+
           <div>
+
             <strong>
               +8000
             </strong>
@@ -399,6 +529,7 @@ export default function Home() {
             <span>
               Clients satisfaits
             </span>
+
           </div>
 
         </div>
