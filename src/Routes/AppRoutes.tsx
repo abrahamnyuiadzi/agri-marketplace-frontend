@@ -44,11 +44,11 @@ export function AppRoutes() {
         <Route path="/register" element={<Register />} />
 
         <Route element={<PrivateRoute />}>
-          <Route path="/checkout" element={<Checkout />} />
+          
           <Route path="/profile" element={<Profile />} />
         </Route>
 
-        
+        <Route path="/checkout" element={<Checkout />} />
 
         <Route path="/producer" element={<ProducerRoute />}>
           <Route element={<ProducerLayout />}>
