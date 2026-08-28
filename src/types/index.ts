@@ -92,19 +92,35 @@ export type OrderStatus =
 
 export interface OrderItem {
   id: number;
+  order_id: number;
   product_id: number;
   product?: Product;
   quantity: number;
-  unit_price: number;
+  price: number;
 }
 
 export interface Order {
   id: number;
-  user_id: number;
+  buyer_id: number | null;
+
+  first_name: string;
+  last_name: string;
+  phone: string;
+  email?: string | null;
+
+  address: string;
+  city: string;
+
+  payment_method: 'flooz' | 'tmoney';
+  payment_phone: string;
+
   status: OrderStatus;
   total: number;
+
   items: OrderItem[];
+
   created_at: string;
+  updated_at: string;
 }
 
 // Panier local (avant transformation en commande)
