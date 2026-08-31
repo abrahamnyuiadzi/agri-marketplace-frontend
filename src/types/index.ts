@@ -101,6 +101,7 @@ export interface OrderItem {
 
 export interface Order {
   id: number;
+
   buyer_id: number | null;
 
   first_name: string;
@@ -110,17 +111,20 @@ export interface Order {
 
   address: string;
   city: string;
+  neighborhood?: string | null;
+  note?: string | null;
 
   payment_method: 'flooz' | 'tmoney';
   payment_phone: string;
 
-  status: OrderStatus;
   total: number;
+
+  status: OrderStatus;
 
   items: OrderItem[];
 
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 // Panier local (avant transformation en commande)

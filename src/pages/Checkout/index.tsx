@@ -1,79 +1,66 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+
 import { useCart } from '../../hooks/useCart';
+import { createOrder } from '../../services/orderService';
 import { formatPrice } from '../../utils/helpers';
+
 import './styles.css';
 
-type PaymentMethod = 'flooz' | 'tmoney' | '';
-
-interface BuyerForm {
-  first_name: string;
-  last_name: string;
-  phone: string;
-  email: string;
-  address: string;
-  city: string;
-  neighborhood: string;
-  note: string;
-}
+type PaymentMethod = 'flooz' | 'tmoney';
 
 export default function Checkout() {
-  const { items, total, updateQuantity, removeItem, clearCart } = useCart();
   const navigate = useNavigate();
 
+  const {
+    items,
+    total,
+    updateQuantity,
+    removeItem,
+    clearCart,
+  } = useCart();
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [neighborhood, setNeighborhood] = useState('');
+  const [note, setNote] = useState('');
+
   const [paymentMethod, setPaymentMethod] =
-    useState<PaymentMethod>('');
+    useState<PaymentMethod>('flooz');
 
-  const [form, setForm] = useState<BuyerForm>({
-    first_name: '',
-    last_name: '',
-    phone: '',
-    email: '',
-    address: '',
-    city: '',
-    neighborhood: '',
-    note: '',
-  });
+  const [paymentPhone, setPaymentPhone] = useState('');
 
-  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  function handleChange(
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    const { name, value } = event.target;
+  /*
+  |--------------------------------------------------------------------------
+  | Numéros de paiement
+  |--------------------------------------------------------------------------
+  |
+  | Pour le moment ce sont des numéros d'exemple.
+  | Tu pourras les remplacer par les vrais numéros de ton entreprise.
+  |
+  */
 
-    setForm((current) => ({
-      ...current,
-      [name]: value,
-    }));
-  }
+  const paymentNumbers = {
+    flooz: '90 00 00 00',
+    tmoney: '91 00 00 00',
+  };
 
-  function increment(productId: number, currentQuantity: number) {
-    updateQuantity(productId, currentQuantity + 1);
-  }
+  /*
+  |--------------------------------------------------------------------------
+  | Si le panier est vide
+  |--------------------------------------------------------------------------
+  */
 
-  function decrement(productId: number, currentQuantity: number) {
-    if (currentQuantity <= 1) {
-      removeItem(productId);
-      return;
-    }
-
-    updateQuantity(productId, currentQuantity - 1);
-  }
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (!paymentMethod) {
-      alert('Veuillez sélectionner un moyen de paiement.');
-      return;
-    }
-
-    setIsConfirmed(true);
-  }
-
-  if (items.length === 0 && !isConfirmed) {
+  if (items.length === 0 && !successMessage) {
     return (
       <div className="checkout">
         <div className="checkout__empty">
@@ -82,22 +69,227 @@ export default function Checkout() {
           <h1>Votre panier est vide</h1>
 
           <p>
-            Ajoutez des produits agricoles à votre panier
-            avant de passer commande.
+            Vous devez ajouter au moins un produit avant de
+            pouvoir passer une commande.
           </p>
 
           <Link
             to="/products"
-            className="checkout__btn checkout__btn--primary"
+            className="checkout__button checkout__button--primary"
           >
-            Découvrir les produits →
+            Découvrir les produits
           </Link>
         </div>
       </div>
     );
   }
 
-  if (isConfirmed) {
+  /*
+  |--------------------------------------------------------------------------
+  | Modifier la quantité
+  |--------------------------------------------------------------------------
+  */
+
+  function increaseQuantity(
+    productId: number,
+    currentQuantity: number,
+    availableQuantity: number
+  ) {
+    if (currentQuantity >= availableQuantity) {
+      return;
+    }
+
+    updateQuantity(productId, currentQuantity + 1);
+  }
+
+  function decreaseQuantity(
+    productId: number,
+    currentQuantity: number
+  ) {
+    if (currentQuantity <= 1) {
+      removeItem(productId);
+      return;
+    }
+
+    updateQuantity(productId, currentQuantity - 1);
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Soumission de la commande
+  |--------------------------------------------------------------------------
+  */
+
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Vérifier le panier
+    |--------------------------------------------------------------------------
+    */
+
+    if (items.length === 0) {
+      setErrorMessage(
+        'Votre panier est vide.'
+      );
+
+      return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Vérification frontend
+    |--------------------------------------------------------------------------
+    */
+
+    if (!firstName.trim()) {
+      setErrorMessage(
+        'Veuillez saisir votre prénom.'
+      );
+
+      return;
+    }
+
+    if (!lastName.trim()) {
+      setErrorMessage(
+        'Veuillez saisir votre nom.'
+      );
+
+      return;
+    }
+
+    if (!phone.trim()) {
+      setErrorMessage(
+        'Veuillez saisir votre numéro de téléphone.'
+      );
+
+      return;
+    }
+
+    if (!address.trim()) {
+      setErrorMessage(
+        'Veuillez saisir votre adresse.'
+      );
+
+      return;
+    }
+
+    if (!city.trim()) {
+      setErrorMessage(
+        'Veuillez saisir votre ville.'
+      );
+
+      return;
+    }
+
+    if (!paymentPhone.trim()) {
+      setErrorMessage(
+        'Veuillez saisir le numéro utilisé pour le paiement.'
+      );
+
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      /*
+      |--------------------------------------------------------------------------
+      | Préparer les produits
+      |--------------------------------------------------------------------------
+      */
+
+      const orderItems = items.map((item) => ({
+        product_id: item.product.id,
+        quantity: item.quantity,
+      }));
+
+      /*
+      |--------------------------------------------------------------------------
+      | Envoyer la commande au backend
+      |--------------------------------------------------------------------------
+      */
+
+      const order = await createOrder({
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        phone: phone.trim(),
+        email: email.trim() || undefined,
+
+        address: address.trim(),
+        city: city.trim(),
+        neighborhood:
+          neighborhood.trim() || undefined,
+        note: note.trim() || undefined,
+
+        payment_method: paymentMethod,
+        payment_phone: paymentPhone.trim(),
+
+        items: orderItems,
+      });
+
+      console.log(
+        'Commande créée :',
+        order
+      );
+
+      /*
+      |--------------------------------------------------------------------------
+      | Vider le panier
+      |--------------------------------------------------------------------------
+      */
+
+      clearCart();
+
+      /*
+      |--------------------------------------------------------------------------
+      | Afficher le message de succès
+      |--------------------------------------------------------------------------
+      */
+
+      setSuccessMessage(
+        'Votre commande a été reçue avec succès !'
+      );
+
+    } catch (error: any) {
+
+      console.error(
+        'Erreur lors de la commande :',
+        error
+      );
+
+      /*
+      |--------------------------------------------------------------------------
+      | Récupérer le message Laravel
+      |--------------------------------------------------------------------------
+      */
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Une erreur est survenue lors de la commande.';
+
+      setErrorMessage(message);
+
+    } finally {
+
+      setIsSubmitting(false);
+    }
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Page de confirmation
+  |--------------------------------------------------------------------------
+  */
+
+  if (successMessage) {
     return (
       <div className="checkout">
         <div className="checkout__success">
@@ -106,63 +298,36 @@ export default function Checkout() {
             ✓
           </div>
 
-          <h1>Commande prête à être confirmée</h1>
+          <h1>
+            Commande reçue !
+          </h1>
 
           <p>
-            Merci {form.first_name} {form.last_name}.
+            {successMessage}
           </p>
 
-          <p>
-            Votre commande est de :
+          <p className="checkout__success-info">
+            Nous avons bien enregistré votre commande.
+            Notre équipe vous contactera prochainement
+            pour confirmer la commande et la livraison.
           </p>
-
-          <strong className="checkout__success-total">
-            {formatPrice(total)}
-          </strong>
-
-          <div className="payment-instruction">
-            <h2>
-              Paiement par{' '}
-              {paymentMethod === 'flooz'
-                ? 'Flooz'
-                : 'TMoney'}
-            </h2>
-
-            <p>
-              Veuillez envoyer le montant exact de votre
-              commande au numéro suivant :
-            </p>
-
-            <strong className="payment-instruction__number">
-              {paymentMethod === 'flooz'
-                ? 'XX XX XX XX'
-                : 'XX XX XX XX'}
-            </strong>
-
-            <p className="payment-instruction__warning">
-              ⚠️ Pour le moment, le paiement est manuel.
-              Vérifiez bien le numéro avant d'envoyer
-              l'argent.
-            </p>
-          </div>
 
           <div className="checkout__success-actions">
-            <button
-              className="checkout__btn checkout__btn--primary"
-              onClick={() => {
-                clearCart();
-                navigate('/');
-              }}
-            >
-              J'ai effectué le paiement
-            </button>
 
-            <button
-              className="checkout__btn checkout__btn--secondary"
-              onClick={() => setIsConfirmed(false)}
+            <Link
+              to="/products"
+              className="checkout__button checkout__button--primary"
             >
-              Modifier ma commande
-            </button>
+              Continuer mes achats
+            </Link>
+
+            <Link
+              to="/"
+              className="checkout__button checkout__button--secondary"
+            >
+              Retour à l'accueil
+            </Link>
+
           </div>
 
         </div>
@@ -173,218 +338,312 @@ export default function Checkout() {
   return (
     <div className="checkout">
 
-      <div className="checkout__header">
-        <div>
-          <Link to="/cart" className="checkout__back">
-            ← Retour au panier
-          </Link>
+      {/* =====================================================
+          EN-TÊTE
+      ====================================================== */}
 
-          <h1>Finaliser votre commande</h1>
+      <div className="checkout__header">
+
+        <div>
+          <span className="checkout__badge">
+            🌱 Agro Marketplace
+          </span>
+
+          <h1>
+            Finaliser votre commande
+          </h1>
 
           <p>
-            Remplissez vos informations pour recevoir
+            Renseignez vos informations pour recevoir
             votre commande.
           </p>
         </div>
+
+        <Link
+          to="/cart"
+          className="checkout__back"
+        >
+          ← Retour au panier
+        </Link>
+
       </div>
+
+
+      {/* =====================================================
+          ERREUR
+      ====================================================== */}
+
+      {errorMessage && (
+        <div className="checkout__alert checkout__alert--error">
+          <span>⚠️</span>
+
+          <p>
+            {errorMessage}
+          </p>
+        </div>
+      )}
+
 
       <div className="checkout__layout">
 
-        {/* =========================
-            INFORMATIONS ACHETEUR
-        ========================== */}
+        {/* ===================================================
+            FORMULAIRE
+        ==================================================== */}
 
         <form
           className="checkout__form"
           onSubmit={handleSubmit}
         >
 
-          <section className="checkout__section">
+          {/* =================================================
+              INFORMATIONS ACHETEUR
+          ================================================== */}
 
-            <div className="checkout__section-header">
-              <span>1</span>
+          <section className="checkout__card">
+
+            <div className="checkout__card-header">
+              <span className="checkout__step">
+                1
+              </span>
 
               <div>
-                <h2>Informations de l'acheteur</h2>
+                <h2>
+                  Informations de l'acheteur
+                </h2>
+
                 <p>
-                  Vous pouvez commander sans créer de compte.
+                  Ces informations nous permettront de vous
+                  contacter.
                 </p>
               </div>
             </div>
 
-            <div className="checkout__grid">
+
+            <div className="checkout__fields">
 
               <div className="checkout__field">
+
                 <label htmlFor="first_name">
                   Prénom *
                 </label>
 
                 <input
                   id="first_name"
-                  name="first_name"
                   type="text"
-                  value={form.first_name}
-                  onChange={handleChange}
+                  value={firstName}
+                  onChange={(e) =>
+                    setFirstName(e.target.value)
+                  }
                   placeholder="Votre prénom"
                   required
                 />
+
               </div>
 
+
               <div className="checkout__field">
+
                 <label htmlFor="last_name">
                   Nom *
                 </label>
 
                 <input
                   id="last_name"
-                  name="last_name"
                   type="text"
-                  value={form.last_name}
-                  onChange={handleChange}
+                  value={lastName}
+                  onChange={(e) =>
+                    setLastName(e.target.value)
+                  }
                   placeholder="Votre nom"
                   required
                 />
+
               </div>
 
+
               <div className="checkout__field">
+
                 <label htmlFor="phone">
                   Téléphone *
                 </label>
 
                 <input
                   id="phone"
-                  name="phone"
                   type="tel"
-                  value={form.phone}
-                  onChange={handleChange}
+                  value={phone}
+                  onChange={(e) =>
+                    setPhone(e.target.value)
+                  }
                   placeholder="Ex : 90 00 00 00"
                   required
                 />
+
               </div>
 
+
               <div className="checkout__field">
+
                 <label htmlFor="email">
                   Email
                 </label>
 
                 <input
                   id="email"
-                  name="email"
                   type="email"
-                  value={form.email}
-                  onChange={handleChange}
+                  value={email}
+                  onChange={(e) =>
+                    setEmail(e.target.value)
+                  }
                   placeholder="exemple@email.com"
                 />
+
               </div>
 
             </div>
 
           </section>
 
-          {/* =========================
+
+          {/* =================================================
               LIVRAISON
-          ========================== */}
+          ================================================== */}
 
-          <section className="checkout__section">
+          <section className="checkout__card">
 
-            <div className="checkout__section-header">
-              <span>2</span>
+            <div className="checkout__card-header">
+
+              <span className="checkout__step">
+                2
+              </span>
 
               <div>
-                <h2>Informations de livraison</h2>
+
+                <h2>
+                  Adresse de livraison
+                </h2>
+
                 <p>
-                  Indiquez où nous devons livrer votre commande.
+                  Où devons-nous livrer votre commande ?
                 </p>
+
               </div>
+
             </div>
 
-            <div className="checkout__field">
-              <label htmlFor="address">
-                Adresse *
-              </label>
 
-              <input
-                id="address"
-                name="address"
-                type="text"
-                value={form.address}
-                onChange={handleChange}
-                placeholder="Ex : Rue 123, maison 45"
-                required
-              />
-            </div>
+            <div className="checkout__fields">
 
-            <div className="checkout__grid">
+              <div className="checkout__field checkout__field--full">
+
+                <label htmlFor="address">
+                  Adresse *
+                </label>
+
+                <textarea
+                  id="address"
+                  value={address}
+                  onChange={(e) =>
+                    setAddress(e.target.value)
+                  }
+                  placeholder="Ex : Rue 123, près de..."
+                  rows={3}
+                  required
+                />
+
+              </div>
+
 
               <div className="checkout__field">
+
                 <label htmlFor="city">
                   Ville *
                 </label>
 
                 <input
                   id="city"
-                  name="city"
                   type="text"
-                  value={form.city}
-                  onChange={handleChange}
+                  value={city}
+                  onChange={(e) =>
+                    setCity(e.target.value)
+                  }
                   placeholder="Ex : Lomé"
                   required
                 />
+
               </div>
 
+
               <div className="checkout__field">
+
                 <label htmlFor="neighborhood">
-                  Quartier *
+                  Quartier
                 </label>
 
                 <input
                   id="neighborhood"
-                  name="neighborhood"
                   type="text"
-                  value={form.neighborhood}
-                  onChange={handleChange}
+                  value={neighborhood}
+                  onChange={(e) =>
+                    setNeighborhood(e.target.value)
+                  }
                   placeholder="Ex : Agoè"
-                  required
                 />
+
               </div>
 
-            </div>
 
-            <div className="checkout__field">
+              <div className="checkout__field checkout__field--full">
 
-              <label htmlFor="note">
-                Instructions de livraison
-              </label>
+                <label htmlFor="note">
+                  Note pour la livraison
+                </label>
 
-              <textarea
-                id="note"
-                name="note"
-                value={form.note}
-                onChange={handleChange}
-                placeholder="Une indication pour faciliter la livraison..."
-                rows={4}
-              />
+                <textarea
+                  id="note"
+                  value={note}
+                  onChange={(e) =>
+                    setNote(e.target.value)
+                  }
+                  placeholder="Une indication supplémentaire..."
+                  rows={3}
+                />
+
+              </div>
 
             </div>
 
           </section>
 
-          {/* =========================
+
+          {/* =================================================
               PAIEMENT
-          ========================== */}
+          ================================================== */}
 
-          <section className="checkout__section">
+          <section className="checkout__card">
 
-            <div className="checkout__section-header">
-              <span>3</span>
+            <div className="checkout__card-header">
+
+              <span className="checkout__step">
+                3
+              </span>
 
               <div>
-                <h2>Mode de paiement</h2>
+
+                <h2>
+                  Paiement
+                </h2>
+
                 <p>
-                  Choisissez votre moyen de paiement.
+                  Pour le moment, le paiement se fait
+                  manuellement par Mobile Money.
                 </p>
+
               </div>
+
             </div>
+
+
+            {/* Choix du moyen de paiement */}
 
             <div className="payment-methods">
 
@@ -395,23 +654,27 @@ export default function Checkout() {
                     ? 'payment-method--active'
                     : ''
                 }`}
-                onClick={() => setPaymentMethod('flooz')}
+                onClick={() =>
+                  setPaymentMethod('flooz')
+                }
               >
+
                 <span className="payment-method__icon">
                   💳
                 </span>
 
                 <span>
-                  <strong>Flooz</strong>
+                  <strong>
+                    Flooz
+                  </strong>
+
                   <small>
-                    Paiement mobile
+                    Paiement Mobile Money
                   </small>
                 </span>
 
-                <span className="payment-method__radio">
-                  {paymentMethod === 'flooz' ? '✓' : ''}
-                </span>
               </button>
+
 
               <button
                 type="button"
@@ -420,133 +683,319 @@ export default function Checkout() {
                     ? 'payment-method--active'
                     : ''
                 }`}
-                onClick={() => setPaymentMethod('tmoney')}
+                onClick={() =>
+                  setPaymentMethod('tmoney')
+                }
               >
+
                 <span className="payment-method__icon">
                   📱
                 </span>
 
                 <span>
-                  <strong>TMoney</strong>
+                  <strong>
+                    TMoney
+                  </strong>
+
                   <small>
-                    Paiement mobile
+                    Paiement Mobile Money
                   </small>
                 </span>
 
-                <span className="payment-method__radio">
-                  {paymentMethod === 'tmoney' ? '✓' : ''}
-                </span>
               </button>
+
+            </div>
+
+
+            {/* Instructions de paiement */}
+
+            <div className="payment-instructions">
+
+              <div className="payment-instructions__icon">
+                💰
+              </div>
+
+              <div>
+
+                <strong>
+                  Envoyez {formatPrice(total)}
+                </strong>
+
+                <p>
+                  Envoyez le montant total au numéro :
+                </p>
+
+                <div className="payment-instructions__number">
+                  {paymentNumbers[paymentMethod]}
+                </div>
+
+                <small>
+                  Moyen sélectionné :{' '}
+                  {paymentMethod === 'flooz'
+                    ? 'Flooz'
+                    : 'TMoney'}
+                </small>
+
+              </div>
+
+            </div>
+
+
+            {/* Numéro utilisé pour payer */}
+
+            <div className="checkout__field">
+
+              <label htmlFor="payment_phone">
+                Numéro utilisé pour le paiement *
+              </label>
+
+              <input
+                id="payment_phone"
+                type="tel"
+                value={paymentPhone}
+                onChange={(e) =>
+                  setPaymentPhone(e.target.value)
+                }
+                placeholder="Ex : 90 00 00 00"
+                required
+              />
+
+              <small className="checkout__hint">
+                Indiquez le numéro depuis lequel vous
+                effectuerez le paiement.
+              </small>
 
             </div>
 
           </section>
 
+
+          {/* =================================================
+              BOUTON
+          ================================================== */}
+
           <button
             type="submit"
             className="checkout__submit"
+            disabled={isSubmitting}
           >
-            Confirmer la commande →
+
+            {isSubmitting ? (
+              <>
+                <span className="checkout__spinner" />
+                Enregistrement de la commande...
+              </>
+            ) : (
+              <>
+                ✓ Confirmer ma commande
+              </>
+            )}
+
           </button>
+
+
+          <p className="checkout__security">
+            🔒 Vos informations sont transmises de manière
+            sécurisée.
+          </p>
 
         </form>
 
-        {/* =========================
-            RÉSUMÉ
-        ========================== */}
+
+        {/* ===================================================
+            RÉCAPITULATIF
+        ==================================================== */}
 
         <aside className="checkout__summary">
 
-          <h2>Votre commande</h2>
+          <div className="checkout__summary-card">
 
-          <div className="checkout__items">
+            <div className="checkout__summary-header">
 
-            {items.map((item) => (
+              <h2>
+                Votre commande
+              </h2>
 
-              <div
-                className="checkout__item"
-                key={item.product.id}
-              >
+              <span>
+                {items.length}{' '}
+                {items.length > 1
+                  ? 'produits'
+                  : 'produit'}
+              </span>
 
-                <div className="checkout__item-image">
+            </div>
 
-                  {item.product.image ? (
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
-                    />
-                  ) : (
-                    <span>🥬</span>
-                  )}
 
-                </div>
+            {/* Produits */}
 
-                <div className="checkout__item-info">
+            <div className="checkout__items">
 
-                  <h3>
-                    {item.product.name}
-                  </h3>
+              {items.map((item) => (
 
-                  <span>
-                    {formatPrice(item.product.price)}
-                    {' / '}
-                    {item.product.unit}
-                  </span>
+                <div
+                  key={item.product.id}
+                  className="checkout__item"
+                >
 
-                  <div className="checkout__quantity">
+                  <div className="checkout__item-image">
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        decrement(
-                          item.product.id,
-                          item.quantity
-                        )
-                      }
-                    >
-                      −
-                    </button>
+                    {item.product.image ? (
+
+                      <img
+                        src={item.product.image}
+                        alt={item.product.name}
+                      />
+
+                    ) : (
+
+                      <span>
+                        🥬
+                      </span>
+
+                    )}
+
+                  </div>
+
+
+                  <div className="checkout__item-info">
+
+                    <h3>
+                      {item.product.name}
+                    </h3>
 
                     <span>
-                      {item.quantity}
+                      {formatPrice(item.product.price)}
+                      {' / '}
+                      {item.product.unit}
                     </span>
+
+
+                    <div className="checkout__quantity">
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          decreaseQuantity(
+                            item.product.id,
+                            item.quantity
+                          )
+                        }
+                        aria-label="Diminuer"
+                      >
+                        −
+                      </button>
+
+                      <span>
+                        {item.quantity}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          increaseQuantity(
+                            item.product.id,
+                            item.quantity,
+                            item.product.quantity
+                          )
+                        }
+                        disabled={
+                          item.quantity >=
+                          item.product.quantity
+                        }
+                        aria-label="Augmenter"
+                      >
+                        +
+                      </button>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="checkout__item-price">
+
+                    <strong>
+                      {formatPrice(
+                        item.product.price *
+                        item.quantity
+                      )}
+                    </strong>
 
                     <button
                       type="button"
                       onClick={() =>
-                        increment(
-                          item.product.id,
-                          item.quantity
-                        )
+                        removeItem(item.product.id)
                       }
+                      className="checkout__remove"
                     >
-                      +
+                      Supprimer
                     </button>
 
                   </div>
 
                 </div>
 
+              ))}
+
+            </div>
+
+
+            {/* Total */}
+
+            <div className="checkout__total">
+
+              <div>
+                <span>
+                  Sous-total
+                </span>
+
                 <strong>
-                  {formatPrice(
-                    item.product.price *
-                    item.quantity
-                  )}
+                  {formatPrice(total)}
+                </strong>
+              </div>
+
+
+              <div>
+                <span>
+                  Livraison
+                </span>
+
+                <strong>
+                  À confirmer
+                </strong>
+              </div>
+
+
+              <div className="checkout__total-final">
+
+                <span>
+                  Total
+                </span>
+
+                <strong>
+                  {formatPrice(total)}
                 </strong>
 
               </div>
 
-            ))}
+            </div>
 
-          </div>
 
-          <div className="checkout__summary-total">
+            {/* Information */}
 
-            <span>Total</span>
+            <div className="checkout__summary-info">
 
-            <strong>
-              {formatPrice(total)}
-            </strong>
+              <span>
+                🌱
+              </span>
+
+              <p>
+                Le montant final de votre commande est
+                recalculé et vérifié par notre serveur
+                avant validation.
+              </p>
+
+            </div>
 
           </div>
 
