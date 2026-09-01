@@ -1,5 +1,12 @@
 import { api } from './api';
-import type { ApiEnvelope, LaravelPaginator, Product } from '../types';
+// import type { ApiEnvelope, LaravelPaginator, Product } from '../types';
+
+import type {
+  ApiEnvelope,
+  LaravelPaginator,
+  Product,
+  Order,
+} from '../types';
 
 
 export interface ProductFilters {
@@ -56,5 +63,18 @@ export async function getMyProducts(
     '/producer/products',
     { params: { page } }
   );
+  return data.data;
+}
+
+export async function getProducerOrders(
+  page = 1
+): Promise<LaravelPaginator<Order>> {
+  const { data } = await api.get<ApiEnvelope<LaravelPaginator<Order>>>(
+    '/producer/orders',
+    {
+      params: { page },
+    }
+  );
+
   return data.data;
 }
