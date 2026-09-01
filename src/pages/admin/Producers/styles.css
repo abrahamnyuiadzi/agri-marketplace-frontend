@@ -1,0 +1,351 @@
+.admin-producers {
+  width: 100%;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.admin-producers__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-producers__badge {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #f1f8f2;
+  color: #2e7d32;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.admin-producers__title h1 {
+  margin: 0 0 0.4rem;
+  font-size: 1.8rem;
+  color: #222;
+}
+
+.admin-producers__title p {
+  margin: 0;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+/* =========================
+   COUNTER
+========================= */
+
+.admin-producers__counter {
+  min-width: 100px;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  background: #f1f8f2;
+  text-align: center;
+}
+
+.admin-producers__counter strong {
+  display: block;
+  color: #2e7d32;
+  font-size: 1.4rem;
+}
+
+.admin-producers__counter span {
+  color: #777;
+  font-size: 0.75rem;
+}
+
+/* =========================
+   TABLE CONTAINER
+========================= */
+
+.admin-producers__table-container {
+  width: 100%;
+  overflow-x: auto;
+
+  background: #fff;
+
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.admin-producers__table {
+  width: 100%;
+  min-width: 900px;
+
+  border-collapse: collapse;
+
+  font-size: 0.88rem;
+}
+
+/* HEADER TABLE */
+
+.admin-producers__table thead {
+  background: #f8faf8;
+}
+
+.admin-producers__table th {
+  padding: 1rem;
+
+  text-align: left;
+
+  color: #555;
+
+  font-size: 0.76rem;
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* CELL */
+
+.admin-producers__table td {
+  padding: 1rem;
+
+  color: #444;
+
+  white-space: nowrap;
+
+  border-bottom: 1px solid #eeeeee;
+}
+
+/* LAST ROW */
+
+.admin-producers__table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* HOVER */
+
+.admin-producers__table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.admin-producers__table tbody tr:hover {
+  background: #fafdfb;
+}
+
+/* =========================
+   ID
+========================= */
+
+.producer-id {
+  color: #888;
+  font-size: 0.78rem;
+}
+
+/* =========================
+   PHONE
+========================= */
+
+.producer-phone {
+  color: #444;
+  text-decoration: none;
+}
+
+.producer-phone:hover {
+  color: #2e7d32;
+}
+
+/* =========================
+   EMAIL
+========================= */
+
+.producer-email {
+  color: #2e7d32;
+  text-decoration: none;
+}
+
+.producer-email:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   ROLE
+========================= */
+
+.producer-role {
+  display: inline-block;
+
+  padding: 0.3rem 0.7rem;
+
+  border-radius: 999px;
+
+  background: #e8f5e9;
+
+  color: #2e7d32;
+
+  font-size: 0.73rem;
+  font-weight: 600;
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+.producer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.producer-action {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 7px;
+
+  background: #f5f5f5;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.producer-action:hover {
+  transform: translateY(-1px);
+}
+
+.producer-action--view:hover {
+  background: #e3f2fd;
+}
+
+.producer-action--edit:hover {
+  background: #fff8e1;
+}
+
+.producer-action--delete:hover {
+  background: #ffebee;
+}
+
+/* =========================
+   LOADER
+========================= */
+
+.admin-producers__loader {
+  min-height: 250px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   ERROR
+========================= */
+
+.admin-producers__error {
+  padding: 2.5rem;
+
+  text-align: center;
+
+  background: #ffebee;
+
+  border-radius: 12px;
+
+  color: #c62828;
+}
+
+.admin-producers__error-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-producers__error p {
+  margin: 0 0 1rem;
+}
+
+.admin-producers__error button {
+  padding: 0.65rem 1.2rem;
+
+  border: none;
+  border-radius: 7px;
+
+  background: #c62828;
+  color: white;
+
+  cursor: pointer;
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.admin-producers__empty {
+  padding: 4rem 2rem;
+
+  text-align: center;
+
+  background: white;
+
+  border: 1px solid #eee;
+  border-radius: 12px;
+}
+
+.admin-producers__empty-icon {
+  margin-bottom: 1rem;
+  font-size: 3rem;
+}
+
+.admin-producers__empty h2 {
+  margin: 0 0 0.5rem;
+}
+
+.admin-producers__empty p {
+  margin: 0;
+  color: #777;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+
+  .admin-producers__header {
+    align-items: flex-start;
+  }
+
+  .admin-producers__title h1 {
+    font-size: 1.5rem;
+  }
+
+  .admin-producers__counter {
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 500px) {
+
+  .admin-producers__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-producers__counter {
+    align-self: flex-start;
+  }
+
+}

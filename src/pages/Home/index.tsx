@@ -269,13 +269,13 @@ export default function Home() {
 
         <div className="section__header">
 
-          <h2>
+          {/* <h2>
             Catégories populaires
           </h2>
 
           <Link to="/categories">
             Voir toutes les catégories →
-          </Link>
+          </Link> */}
 
         </div>
 
