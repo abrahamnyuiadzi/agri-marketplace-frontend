@@ -78,6 +78,7 @@ export interface Product {
 
   category?: Category;
   farm?: Farm;
+  user?: User;
 
   created_at: string;
   updated_at: string;
@@ -182,6 +183,7 @@ export interface RegisterPayload {
   password: string;
   password_confirmation: string;
   role?: UserRole;
+  terms_accepted: boolean;
 }
 
 export interface AuthResponse {

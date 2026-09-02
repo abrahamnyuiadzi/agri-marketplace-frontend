@@ -78,3 +78,29 @@ export async function getProducerOrders(
 
   return data.data;
 }
+
+/**
+ * Récupérer tous les produits pour l'administration
+ */
+export async function getAdminProducts(
+  page = 1
+): Promise<LaravelPaginator<Product>> {
+  const { data } = await api.get<
+    ApiEnvelope<LaravelPaginator<Product>>
+  >('/admin/products', {
+    params: {
+      page,
+    },
+  });
+
+  return data.data;
+}
+
+/**
+ * Supprimer un produit depuis l'administration
+ */
+export async function deleteAdminProduct(
+  id: number
+): Promise<void> {
+  await api.delete(`/admin/products/${id}`);
+}
