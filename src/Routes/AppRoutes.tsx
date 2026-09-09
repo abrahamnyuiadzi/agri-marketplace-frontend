@@ -29,6 +29,8 @@ const AdminCategories = lazy(() => import('../pages/admin/Categories'));
 const AdminProducts = lazy(() => import('../pages/admin/Products'));
 const AdminOrders = lazy(() => import('../pages/admin/Orders'));
 import { ProducerLayout } from '../layouts/ProducerLayout';
+import OrderTracking from '../pages/OrderTracking';
+import MyOrders from '../pages/myOrders';
 
 export function AppRoutes() {
   return (
@@ -42,6 +44,12 @@ export function AppRoutes() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        <Route
+  path="/orders/:id"
+  element={<OrderTracking />}
+/>
+<Route path="/orders" element={<MyOrders />} />
 
         <Route element={<PrivateRoute />}>
           

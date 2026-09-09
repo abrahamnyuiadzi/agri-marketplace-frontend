@@ -45,6 +45,14 @@ export function Navbar() {
 
         {isAuthenticated ? (
           <>
+            {/* MES COMMANDES */}
+            <Link
+              to="/orders"
+              className="navbar__orders"
+            >
+              Mes commandes
+            </Link>
+
             {/* ESPACE PRODUCTEUR */}
             {user?.role === 'producer' && (
               <Link
